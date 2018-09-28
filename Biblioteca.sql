@@ -1,3 +1,5 @@
+/*Ejercicio DER Pre-Parcial*/
+
 CREATE DATABASE libros;
 CREATE TABLE nacionalidades(
     id_nacionalidad  tinyint unsigned ,

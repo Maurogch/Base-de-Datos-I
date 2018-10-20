@@ -9,13 +9,13 @@ on e.idEscuela = r.idEscuela
 group by e.escuela
 order by e.idEscuela;
 
-/*--2--*/ /*mezcla escuelas, deberia para el mes 10 haber escuela1 y escuela2*/
+/*--2--*/
 use museo;
-select e.escuela, count(extract(year_month from fecha)), extract(year_month from fecha) as mes
+select e.escuela, extract(year_month from fecha) as mes, count(r.idEscuela) as cantReservas
 from Escuelas e
 inner join Reservas r
 on e.idEscuela = r.idEscuela
-group by extract(year_month from fecha)
+group by extract(month from fecha), e.escuela
 order by e.idEscuela;
 
 /*--3--*/ /*no es necesario group by?*/

@@ -75,12 +75,34 @@ select e.escuela, count(r.idEscuela)
 from escuelas e
 inner join reservas r
 on e.idEscuela = r.idEscuela
-where r.fecha = (select max(year(fecha))
-    from reservas r
-    where e.idEscuela = r.idEscuela)
+where year(r.fecha) = (select max(year(fecha))
+    from reservas re
+    where e.idEscuela = re.idEscuela)
 group by e.escuela
 
-
+/*--6--*/
+/*Listar el nombre de las Escuelas que realizaron Reservas. Resolver con Exists*/
 use museo;
-select max(year(fecha))
-from reservas
+select e.escuela
+from escuelas e
+where Exists (select *
+    from reservas r
+    where e.idEscuela = r.idEscuela)
+
+/*--7--*/
+/*Listar el nombre de las Escuelas que realizaron Reservas. Resolver con IN*/
+use museo;
+select e.escuela, e.idEscuela
+from escuelas e
+where e.idEscuela in (select r.idEscuela
+    from reservas r)
+
+/*alt method, returns all schools with 0 if there is no reserva*/
+use museo;
+select e.escuela, e.idEscuela in (select r.idEscuela 
+    from reservas r)
+from escuelas e
+
+/*--8--*/
+/*Escribir todas las consultas anteriores con combinación de tablas y comparar 
+el plan de ejecución.*/

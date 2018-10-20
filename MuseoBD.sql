@@ -87,13 +87,13 @@ values (1,1,1,1),(1,1,2,0),(2,1,1,0),(2,1,2,1),(3,2,3,1),(4,3,1,1),(5,1,1,1);*/
 );*/
 
 /*insert into localidades(localidad)
-values ('Buenos Aires'),('Gran Buenos Aires')*/
+values ('Buenos Aires'),('Gran Buenos Aires');*/
 
 /*ALTER TABLE Escuelas
-ADD  idLocalidad int */
+ADD  idLocalidad int; */
 
 /*ALTER TABLE Escuelas
-add constraint foreign key (idLocalidad) references localidades (idLocalidad)*/
+add constraint foreign key (idLocalidad) references localidades (idLocalidad);*/
 
 /*update escuelas
 set idLocalidad = 1

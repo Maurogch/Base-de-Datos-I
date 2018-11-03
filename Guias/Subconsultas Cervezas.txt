@@ -1,0 +1,10 @@
+===================================================
+Realizar las siguientes Consultas con Subconsultas
+===================================================
+
+1. Mostrar el nombre del ingrediente del que mas cantidad haya.
+2. Mostrar las Recetas que contengan un numero igual o menor al promedio total.
+3. Mostrar las Recetas que contengan en si, los primeros 3 ingredientes.
+4. Listar las Cervezas que en su Receta contengan la mayor cantidad de Ingredientes.
+5. Mostrar las Receta con el ID 3, junto con la cantidad de Ingredientes que posee y en otra columna el promedio de ingredientes General.
+6. Mostrar las Recetas que superen el Promedio de ingredientes general (Simular Having).

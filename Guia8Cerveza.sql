@@ -48,15 +48,19 @@ where IdIngrediente in (select * from #double subquery because it doesn't like a
 group by idreceta;
 
 #alt
-use Cervecerias;
-select *
-from ingredientexrecetas
-join (select IdIngrediente
+use cervecerias;
+select idreceta, t.idingrediente
+from ingredientexrecetas ir
+inner join (select idingrediente
     from ingredientes
-    order by IdIngrediente
-    limit 6) as t
+    limit 3) as t
+on t.idingrediente = ir.idingrediente
 group by idreceta
-use Cervecerias;
+having count (t.idingrediente) = 3; 
+#having count = buscamos que el resultado tenga 3 ingredientes,
+#ya el resultadoya devuelve solo recentas que tiene alguno de los 
+#3 primeros
+
 
 #chequear ingredienter por receta
 use Cervecerias;

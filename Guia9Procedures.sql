@@ -1,3 +1,13 @@
+/**Variables Ejemplo**/
+set @var1 = null;
+set @var2 = null;
+
+select max(puntos),max(idPartido)
+into @var1, @var2
+from jugadores_x_equipo_x_partido;
+
+select @var1, @var2;
+
 /*--1--*/
 /*Generar un Stored Procedure que permite ingresar un equipo.*/
 
@@ -81,3 +91,68 @@ end
 
 use futbol;
 call listPartidosMonthYear(1,2018)
+
+/*--5--*/
+/*Generar un Stored Procedure que devuelva el resultado de un partido pasando por
+parámetro los nombres de los equipos. El resultado debe ser devuelto en dos
+variables output*/
+
+create procedure futbol.resultadoPartido(in local varchar(50), in visitante varchar(50), 
+out rLocal int, out rVisitante int)
+begin
+
+    select (select count(puntos)
+        from jugadores_x_equipo_x_partido jx
+        where jx.idJugador = j1.idJugador
+        ) as'Puntos Local',
+        (select count(puntos)
+        from jugadores_x_equipo_x_partido jx
+        where jx.idJugador = j2.idJugador
+        ) as'Puntos Visitante'
+    into rLocal, rVisitante
+    from partidos p
+    inner join equipos e1
+    on p.idEquipoLocal = e1.idEquipo
+    inner join equipos e2
+    on p.idEquipoVisitante = e2.idEquipo
+    inner join jugadores j1
+    on j1.idEquipo = p.idEquipoLocal
+    inner join jugadores j2
+    on j2.idEquipo = p.idEquipoVisitante
+    where e1.equipo = local
+    and e2.equipo = visitante
+    limit 1;
+    #falta implrementación de torneo en el der, deberia de devolver solo 2 partidos
+    #por lo que usamos limit 1 y devolvemos el primer resultados solo para testear
+
+end
+
+use futbol;
+call resultadoPartido('Racing', 'Boca', @rLocal, @rVisitante);
+
+select @rLocal, @rVisitante;
+
+/*--6--*/
+/*Generar un stored procedure que muestre las estadisticas promedio de los jugadores
+de un equipo.*/
+
+create procedure futbol.promedioJugadoresEquipo(in _idEquipo int, out pPuntos int,
+out pRebotes int, out pAsistencias int, out pMinutos int, out pFaltas int)
+begin
+
+    select avg(puntos), avg(rebotes), avg(asistencias), avg(minutos), avg(faltas)
+    into pPuntos, pRebotes, pAsistencias, pMinutos, pFaltas
+    from jugadores_x_equipo_x_partido jx
+    inner join jugadores j
+    on jx.idJugador = j.idJugador
+    where idEquipo = idEquipo;
+
+end
+
+call promedioJugadoresEquipo(1, @pPuntos, @pRebotes, @pAsistencias, @pMinutos, @pFaltas);
+
+select @pPuntos, @pRebotes, @pAsistencias, @pMinutos, @pFaltas;
+
+
+
+

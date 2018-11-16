@@ -3,10 +3,10 @@
 realizadas con una subconsulta.*/
 
 use museo;
-select e.idEscuela, escuela, (select count(*)
-    from reservas r
-    WHERE r.idEscuela = e.idEscuela
-    ) as CantReservas
+select idEscuela, escuela, (select count(r.idReserva)
+    from Reservas r
+    where r.idEscuela = e.idEscuela
+    ) as cantReservas
 from escuelas e
 
 /*--2--*/
@@ -26,6 +26,14 @@ from escuelas e
 /*Para cada Tipo de Visita, listar el nombre y obtener con una subconsulta 
 como tabla derivada la cantidad de Reservas realizadas*/
 
+use museo;
+select TipoVisita, (select count(v.idReserva)
+    from visitas v
+    where v.idTipoVisita = tv.idTipoVisita
+    ) as cantReservas
+from TipoVisitas tv
+
+/*alt method with join query*/
 use museo;
 select tv.tipoVisita, cantidad
 from TipoVisitas tv
@@ -49,7 +57,7 @@ derivada la cantidad de Visitas en las que participó como Responsable. En
 caso de no haber participado en ninguna, mostrar el número cero.*/
 
 use museo;
-select g.guia, (select ifNull(count(*),0)
+select g.guia, (select ifNull(count(vg.idReserva),0)
     from VisitasGuias vg
     where g.idGuia = vg.idGuia
     and Responsable = 1

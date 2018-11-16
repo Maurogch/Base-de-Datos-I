@@ -33,21 +33,7 @@ group by idreceta
 /*--3--*/
 /*Mostrar las Recetas que contengan en si, los primeros 3 ingredientes.*/
 
-/*devuelve todas las recetas que contienen al menos uno de los 3 primeros
-deberia devoler la que tengas todos*/
 
-use Cervecerias;
-select idreceta
-from ingredientexrecetas
-where IdIngrediente in (select * from #double subquery because it doesn't like a limit there
-                        (select IdIngrediente
-                        from ingredientes
-                        order by IdIngrediente
-                        limit 3
-                        )as t)
-group by idreceta;
-
-#alt
 use cervecerias;
 select idreceta, t.idingrediente
 from ingredientexrecetas ir
@@ -61,6 +47,20 @@ having count (t.idingrediente) = 3;
 #ya el resultadoya devuelve solo recentas que tiene alguno de los 
 #3 primeros
 
+/*siguientes resultados son incorrectos*/
+/*devuelve todas las recetas que contienen al menos uno de los 3 primeros
+deberia devoler la que tengas todos*/
+
+use Cervecerias;
+select idreceta
+from ingredientexrecetas
+where IdIngrediente in (select * from #double subquery because it doesn't like a limit there
+                        (select IdIngrediente
+                        from ingredientes
+                        order by IdIngrediente
+                        limit 3
+                        )as t)
+group by idreceta;
 
 #chequear ingredienter por receta
 use Cervecerias;
@@ -94,6 +94,9 @@ and IdIngrediente = (select * from
                         )as t)
 group by idreceta;
 
+/*this can't be done, where and and on the same field will never work, as
+it checks, in this case, if a singular id is 1 and 2 at the same time*/
+/*this is and example of a inclusive in, an IN uses OR, here we use AND*/
 #query inclusive in
 use Cervecerias;
 select idreceta
@@ -107,10 +110,9 @@ and 3
 cantidad de Ingredientes.*/
 
 use Cervecerias;
-select c.idcerveza, nombreCerveza, idreceta, (select count(idreceta)
+select c.idcerveza, nombreCerveza, idreceta, (select ifnull(count(ir.idIngrediente),0)
     from ingredientexrecetas ir
     where r.idreceta = ir.idreceta
-    group by idreceta
     ) as'Cantidad Ingredientes'
 from cervezas c
 inner join recetas r
@@ -139,17 +141,19 @@ order by t.cantidad desc
 
 use Cervecerias;
 select r.idreceta, nombrereceta, t2.count as'Cantidad Ingredientes',(select avg(t.count)
-from (select idreceta, count(idreceta) as count
-from ingredientexrecetas
-group by idreceta
-) t) as promedio
+    from (select count(*) as count
+        from ingredientexrecetas
+        group by IdIngrediente
+        ) t
+    ) as promedio
 from recetas r
 join (select idreceta, count(idreceta) as count
-from ingredientexrecetas ir
-group by idreceta
-) as t2 
+        from ingredientexrecetas ir
+        group by idIngrediente
+        ) as t2 
 on r.idreceta = t2.idreceta
 where r.idreceta = 3
+
 
 /*--6--*/
 /*Mostrar las Recetas que superen el Promedio de ingredientes 
@@ -157,16 +161,15 @@ general (Simular Having).*/
 
 select r.idreceta, r.nombrereceta, t.cant
 from recetas r
-left join (select idreceta, count(idreceta) as cant #cant as a subquery as you cant use count in where clause
+left join (select idreceta, count(idreceta) as cant #cant as a subquery as you cant use count in where clause, but you can use an alias in having, so doing a group by and a having and calling that alias would work too
     from ingredientexrecetas
-    group by idreceta) t
+    group by IdIngrediente) t
 on r.idreceta = t.idreceta
 where cant >= (select avg(t2.count)
-from (
-select idreceta, count(idreceta) as count
-from ingredientexrecetas
-group by idreceta
-) t2)
+    from (select idreceta, count(idreceta) as count
+        from ingredientexrecetas
+        group by IdIngrediente
+        ) t2)
 
 use Cervecerias;
 select nombreCerveza, nombrereceta

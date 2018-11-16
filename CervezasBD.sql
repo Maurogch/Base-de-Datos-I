@@ -1,4 +1,4 @@
-
+create database Cervecerias;
 use Cervecerias;
 CREATE TABLE Cervezas (
 IdCerveza INT NOT NULL AUTO_INCREMENT,
